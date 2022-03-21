@@ -14,8 +14,10 @@ from captcha2str import captcha2str
 
 driver = webdriver.Chrome(r"chromedriver")
 # driver下载地址 https://chromedriver.storage.googleapis.com/index.html
-# begin_time = "07:00:00" # 注意07的0
-begin_time = "21:38:00" # 测试用时间
+driver.maximize_window()
+
+begin_time = "07:00:00" # 注意07的0
+# begin_time = "21:38:00" # 测试用时间
 
 
 sso_username = ''
@@ -23,14 +25,14 @@ sso_passwd = ''
 alipay_username = ''
 alipay_passwd = ''
 
-reserve_time = [7]  # 开始时间，此即为8~9, 9~10，24小时制！
+reserve_time = [19, 20]  # 开始时间，此即为8~9, 9~10，24小时制！
 # 现在学校的场馆预约好像有个bug，选8,10这种跳着的就只能选一个，2块场必须连续
-priority = [12, 11, 10, 8, 5, 7, 6, 4, 3, 2, 9, 1]
+priority = [8, 11, 10, 5, 7, 6, 4, 3, 2, 12, 9, 1]
 
 
 def explicit_click(method, value, driver=driver):
     locator = (method, value)
-    WebDriverWait(driver, 20, 0.5).until(EC.presence_of_element_located(locator))
+    WebDriverWait(driver, 30, 0.5).until(EC.presence_of_element_located(locator))
     if EC.element_to_be_clickable(locator):
         driver.find_element(method, value).click()
     else:
@@ -39,13 +41,13 @@ def explicit_click(method, value, driver=driver):
 
 def explicit_find(method, value, driver=driver):
     locator = (method, value)
-    WebDriverWait(driver, 20, 0.5).until(EC.presence_of_element_located(locator))
+    WebDriverWait(driver, 30, 0.5).until(EC.presence_of_element_located(locator))
     return driver.find_element(method, value)
 
 
 def explicit_interact(method, value, driver=driver):
     locator = (method, value)
-    WebDriverWait(driver, 20, 0.5).until(EC.element_to_be_clickable(locator))
+    WebDriverWait(driver, 30, 0.5).until(EC.element_to_be_clickable(locator))
     return driver.find_element(method, value)
 
 
@@ -102,6 +104,14 @@ def pay(driver=driver):
     driver.switch_to.window(driver.window_handles[1])
 
     explicit_click('css selector', '#basic > a')
+
+    try:
+        while(explicit_find('xpath', '/ html / body / pre')):
+            driver.back()
+            explicit_click('css selector', '#basic > a')
+    except:
+        pass
+
     explicit_click('css selector', '#mat-tab-content-0-0 > div > div > span:nth-child(1) > svg')
     explicit_click('css selector', '#J_changePayStyle')
     explicit_click('css selector', '#J_viewSwitcher')
@@ -126,6 +136,7 @@ if __name__ == '__main__':
 
     now = datetime.datetime.now()
     begin_time_today = str(now.date()) + ' ' + begin_time
+    # begin_time_dt = datetime.datetime.strptime(begin_time_today, "%Y-%m-%d %H:%M:%S") + datetime.timedelta(days=1)
     begin_time_dt = datetime.datetime.strptime(begin_time_today, "%Y-%m-%d %H:%M:%S")
     one_minute_before = begin_time_dt - datetime.timedelta(minutes=1)
 
@@ -137,7 +148,7 @@ if __name__ == '__main__':
     print("到达目标时间前一分钟，开始启动浏览器内核")
 
     driver.get("https://cgyy.buaa.edu.cn/venue/Login")
-    driver.maximize_window()
+
 
     # 点击进入场馆预约的统一认证界面，输入用户名密码、确认
     explicit_click('css selector', 'body > div.fullHeight > div > div > div > div > div.loginFlagWrap > a')
@@ -151,7 +162,7 @@ if __name__ == '__main__':
     explicit_click('css selector',
                    'body > div.fullHeight > div > div > div.discount > div.discountWrap > div > div.venueList > div:nth-child(2) > div.venueDetail > div.venueDetailBottom > div:nth-child(1)')
 
-    WebDriverWait(driver, 20, 0.5).until(
+    WebDriverWait(driver, 30, 0.5).until(
         EC.url_changes('https://cgyy.buaa.edu.cn/venue/venue-introduce'))  # 检查click执行完毕，此后进入轮询等待状态
 
     now = datetime.datetime.now()
