@@ -9,7 +9,7 @@ An automatic Python script using selenium for the BUAA reservation system.
 - Priority list: DO IT WHEN IT'S GREEN. you can make your own priority list of which court should be booked first. 
 - Debugging mechanisms: there are a few circumstances that are extremely unfriendly to the automatic scripts. However, this script would counterback if it encounters them.
 
-**Be warned, this script requires you to enter your SSO & Alipay account's usernames & passwords to achieve fully automatic, be sure you run the script in a secure environment.**
+**Be warned, this script requires you to enter your SSO & Alipay account's usernames & passwords to achieve fully automation, be sure you run the script in a secure environment.**
 
 
 # Installation
