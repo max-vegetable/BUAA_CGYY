@@ -1,24 +1,15 @@
 # -*- coding:utf-8 -*-
 from selenium import webdriver
 import datetime
-import time
 from selenium.webdriver.support.wait import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
-from selenium.webdriver.common.by import By
-from PIL import Image
-import pytesseract
 from captcha2str import captcha2str
-
-# from explicit_driver import *
-
 
 driver = webdriver.Chrome(r"chromedriver")
 # driver下载地址 https://chromedriver.storage.googleapis.com/index.html
 driver.maximize_window()
 
 begin_time = "07:00:00" # 注意07的0
-# begin_time = "21:38:00" # 测试用时间
-
 
 sso_username = ''
 sso_passwd = ''
@@ -86,8 +77,7 @@ def reserve(reserve_time, priority, driver=driver):
             选同伴处，label后面的index为同伴index，从1开始，如有需要可以改为1。
             span后面的1指checkbox，不要改
             """
-            explicit_click('xpath',
-                           '/html/body/div[1]/div/div/div[3]/div[2]/div/div[2]/form/div/div[2]/div/div/label[1]/span[1]/input')
+            explicit_click('xpath', '/html/body/div[1]/div/div/div[3]/div[2]/div/div[2]/form/div/div[2]/div/div/label[1]/span[1]/input')
             explicit_click('xpath', '/html/body/div[1]/div/div/div[3]/div[2]/div/div[2]/div/div/div[2]')
             break
         else:
@@ -136,8 +126,8 @@ if __name__ == '__main__':
 
     now = datetime.datetime.now()
     begin_time_today = str(now.date()) + ' ' + begin_time
-    # begin_time_dt = datetime.datetime.strptime(begin_time_today, "%Y-%m-%d %H:%M:%S") + datetime.timedelta(days=1)
-    begin_time_dt = datetime.datetime.strptime(begin_time_today, "%Y-%m-%d %H:%M:%S")
+    begin_time_dt = datetime.datetime.strptime(begin_time_today, "%Y-%m-%d %H:%M:%S") + datetime.timedelta(days=1)
+    # begin_time_dt = datetime.datetime.strptime(begin_time_today, "%Y-%m-%d %H:%M:%S") # 测试时使用
     one_minute_before = begin_time_dt - datetime.timedelta(minutes=1)
 
     while (now < one_minute_before):
