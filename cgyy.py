@@ -4,6 +4,8 @@ import datetime
 from selenium.webdriver.support.wait import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from captcha2str import captcha2str
+import yaml
+
 
 driver = webdriver.Chrome(r"chromedriver")
 # driver下载地址 https://chromedriver.storage.googleapis.com/index.html
@@ -11,14 +13,12 @@ driver.maximize_window()
 
 begin_time = "07:00:00" # 注意07的0
 
-sso_username = ''
-sso_passwd = ''
-alipay_username = ''
-alipay_passwd = ''
+conf_file = open('configs/default.yaml', 'r')
+configs = yaml.load(conf_file, Loader=yaml.Loader)
 
-reserve_time = [19, 20]  # 开始时间，此即为8~9, 9~10，24小时制！
+reserve_time = configs['reserve_time'] # 开始时间，此即为8~9, 9~10，24小时制！
 # 现在学校的场馆预约好像有个bug，选8,10这种跳着的就只能选一个，2块场必须连续
-priority = [8, 11, 10, 5, 7, 6, 4, 3, 2, 12, 9, 1]
+priority = configs['priority']
 
 
 def explicit_click(method, value, driver=driver):
@@ -77,7 +77,7 @@ def reserve(reserve_time, priority, driver=driver):
             选同伴处，label后面的index为同伴index，从1开始，如有需要可以改为1。
             span后面的1指checkbox，不要改
             """
-            explicit_click('xpath', '/html/body/div[1]/div/div/div[3]/div[2]/div/div[2]/form/div/div[2]/div/div/label[1]/span[1]/input')
+            explicit_click('xpath', '/html/body/div[1]/div/div/div[3]/div[2]/div/div[2]/form/div/div[2]/div/div/label[%s]/span[1]/input' % configs['candidate'])
             explicit_click('xpath', '/html/body/div[1]/div/div/div[3]/div[2]/div/div[2]/div/div/div[2]')
             break
         else:
@@ -105,8 +105,8 @@ def pay(driver=driver):
     explicit_click('css selector', '#mat-tab-content-0-0 > div > div > span:nth-child(1) > svg')
     explicit_click('css selector', '#J_changePayStyle')
     explicit_click('css selector', '#J_viewSwitcher')
-    explicit_interact('css selector', '#J_tLoginId').send_keys(alipay_username)
-    explicit_interact('css selector', '#payPasswd_rsainput').send_keys(alipay_passwd)
+    explicit_interact('css selector', '#J_tLoginId').send_keys(configs['alipay']['user'])
+    explicit_interact('css selector', '#payPasswd_rsainput').send_keys(configs['alipay']['passwd'])
 
     capt_code = captcha2str('class name', 'checkCodeImg', driver)
 
@@ -114,7 +114,7 @@ def pay(driver=driver):
     explicit_click('css selector', '#J_newBtn')
 
     driver.switch_to.window(driver.window_handles[1])
-    explicit_find('class name', 'sixDigitPassword').send_keys(alipay_passwd)
+    explicit_find('class name', 'sixDigitPassword').send_keys(configs['alipay']['passwd'])
     explicit_click('css selector', '#J_authSubmit')
 
 
@@ -143,8 +143,8 @@ if __name__ == '__main__':
     # 点击进入场馆预约的统一认证界面，输入用户名密码、确认
     explicit_click('css selector', 'body > div.fullHeight > div > div > div > div > div.loginFlagWrap > a')
     driver.switch_to.frame("loginIframe")
-    explicit_find('id', 'unPassword').send_keys(sso_username)
-    explicit_find('id', 'pwPassword').send_keys(sso_passwd)
+    explicit_find('id', 'unPassword').send_keys(configs['sso']['user'])
+    explicit_find('id', 'pwPassword').send_keys(configs['sso']['passwd'])
     explicit_click('class name', 'submit-btn')
 
     # 点击场地预约、选择学院路主馆羽毛球
