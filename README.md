@@ -44,12 +44,12 @@ You could try with other browser's driver (e.g. Firefox, Edge, Safari, etc.). Se
 2. The reservation time & priority list. It is represented by the beginning of an hour e.g. `reservation time: [19, 20]` means you're reserving 19:00~21:00. It might be a bug that the reservation system prevents you from reserving non-continuous time like [19, 21] which would be invalid, forcing you to select only either of the blocks.
 3. **[Optional]** By default, the script chooses the first companion candidate showing in the default config file. If you would like to choose other candidate(s), revise the index of label ranging from 1 to n. For example, `candidate: 2` means choosing the secondary candidate. if you want to choose more of the candidates, check the related codes in `cgyy.py` line 80.
 - **[Optional]** You can use the script just for reservation, but pay the fees manually (in 10 minutes). If in this case, just comment `cgyy.py` line 175 and leave the alipay username & password blank, then you can pay the fees manually using QR codes through multiple payment channels.
-- please check `python cgyy.py` line 186-187. If your current time is from 0:00-7:00 (for example, you get up minutes before 7am and run the script), use line 187 and comment line 186. Instead, use 186, which is a more common scenario if you're running the script before bedtime.
+- please check `python cgyy.py` line 186-187. If your current time is in 0:00-7:00 (for example, you get up minutes before 7am and run the script), use line 187 and comment line 186. Instead, use 186, which is a more common scenario if you're running the script before bedtime.
 - Simply run the code with `python cgyy.py`. Or you could use other IDEs like Pycharm to run and see how each line works.
 
 # Results
 
-If you're running everything correctly, you should see the messages like this (ignore the timestamp):
+If you're running everything correctly, you should see the messages like these (ignore the timestamp):
 ![](img/messages.png)
 
 Theoretically, as the messages above indicate, it should only takes ***3 seconds*** to lock the court.
