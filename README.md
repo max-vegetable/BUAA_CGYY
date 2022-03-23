@@ -44,6 +44,7 @@ You could try with other browser's driver (e.g. Firefox, Edge, Safari, etc.). Se
 2. The reservation time & priority list. It is represented by the beginning of an hour e.g. `reservation time: [19, 20]` means you're reserving 19:00~21:00. It might be a bug that the reservation system prevents you from reserving non-continuous time like [19, 21] which would be invalid, forcing you to select only either of the blocks.
 3. **[Optional]** By default, the script chooses the first companion candidate showing in the default config file. If you would like to choose other candidate(s), revise the index of label ranging from 1 to n. For example, `candidate: 2` means choosing the secondary candidate. if you want to choose more of the candidates, check the related codes in `cgyy.py` line 80.
 - **[Optional]** You can use the script just for reservation, but pay the fees manually (in 10 minutes). If in this case, just comment `cgyy.py` line 175 and leave the alipay username & password blank, then you can pay the fees manually using QR codes through multiple payment channels.
+- please check `python cgyy.py` line 186-187. If your current time is from 0:00-7:00 (for example, you get up minutes before 7am and run the script), use line 187 and comment line 186. Instead, use 186, which is a more common scenario if you're running the script before bedtime.
 - Simply run the code with `python cgyy.py`. Or you could use other IDEs like Pycharm to run and see how each line works.
 
 # TODO
@@ -63,6 +64,7 @@ You could try with other browser's driver (e.g. Firefox, Edge, Safari, etc.). Se
 - 2022/03/20: Fourth test with a huge success yet the crashdown didn't occur.
 - 2022/03/21: Fifth test with another huge success as the confirming message was delayed for 4 minutes that seemingly proved the debugging mechanism worked. ***Uploaded ver 1.1, fixing multiple bugs occurred in previous tests and adding this ReadMe doc.***
 - 2022/03/22: Sixth test encountered an error of loading pages, which is really wierd. Might be the network problem. ***Uploaded ver 1.2, adding yaml-load modules and revising the usage part of this doc.***
+- 2022/03/23: Seventh test encountered an exception from the codes uploaded yesterday. ***Uploaded ver 1.3, adding a recheck-mechanism that allows it to repeat checking for available courts if other scripts get over. Also did a yapf refinement and added a few guiding messages.***
 
 # License
 
