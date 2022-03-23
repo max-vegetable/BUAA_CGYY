@@ -23,7 +23,7 @@ priority = configs['priority']
 
 def explicit_click(method, value, driver=driver):
     locator = (method, value)
-    WebDriverWait(driver, 30, 0.5).until(EC.presence_of_element_located(locator))
+    WebDriverWait(driver, 60, 0.5).until(EC.presence_of_element_located(locator))
     if EC.element_to_be_clickable(locator):
         driver.find_element(method, value).click()
     else:
@@ -35,6 +35,10 @@ def explicit_find(method, value, driver=driver):
     WebDriverWait(driver, 30, 0.5).until(EC.presence_of_element_located(locator))
     return driver.find_element(method, value)
 
+def explicit_find_short(method, value, driver=driver):
+    locator = (method, value)
+    WebDriverWait(driver, 5, 0.5).until(EC.presence_of_element_located(locator))
+    return driver.find_element(method, value)
 
 def explicit_interact(method, value, driver=driver):
     locator = (method, value)
@@ -43,6 +47,12 @@ def explicit_interact(method, value, driver=driver):
 
 
 def reserve(reserve_time, priority, driver=driver):
+    # 点两下日期向右（两天后），再点两下时间向后
+    explicit_click('css selector',
+                   'body > div.fullHeight > div > div > div.coach > div.venueSiteWrap > div > div.reservationStep1 > form > div > div > button:nth-child(3)')
+    explicit_click('css selector',
+                   'body > div.fullHeight > div > div > div.coach > div.venueSiteWrap > div > div.reservationStep1 > form > div > div > button:nth-child(3)')
+
     for i in range((reserve_time[0] - 7) // 5):  # 跨页问题怎么搞
         explicit_click('xpath', "//*[@id='scrollTable']/div/table/thead/tr/td[6]/div/span/i")
 
@@ -79,7 +89,20 @@ def reserve(reserve_time, priority, driver=driver):
             """
             explicit_click('xpath', '/html/body/div[1]/div/div/div[3]/div[2]/div/div[2]/form/div/div[2]/div/div/label[%s]/span[1]/input' % configs['candidate'])
             explicit_click('xpath', '/html/body/div[1]/div/div/div[3]/div[2]/div/div[2]/div/div/div[2]')
-            break
+
+
+            try:
+                # 当出现预约错误时返回尝试重新预约
+                err_element = explicit_find_short('css selector', 'body > div:nth-child(21) > div.ivu-modal-wrap > div > div > div > div > div.ivu-modal-confirm-body > div')
+                if "同伴存在时间冲突" in err_element.text:
+                    print("候选人/同伴存在时间冲突，预约失败！")
+                else:
+                    "场地下手慢了一点，正在重新选择……"
+                    driver.refresh()
+                    reserve(reserve_time, priority, driver=driver)
+            except:
+                print(datetime.datetime.now().time(), "预约成功！进入付款页面……")
+                return None
         else:
             continue
     else:
@@ -96,7 +119,8 @@ def pay(driver=driver):
     explicit_click('css selector', '#basic > a')
 
     try:
-        while(explicit_find('xpath', '/ html / body / pre')):
+        print('正在检查是否出现支付系统故障，请等待……')
+        while(explicit_find_short('xpath', '/ html / body / pre')):
             driver.back()
             explicit_click('css selector', '#basic > a')
     except:
@@ -117,8 +141,7 @@ def pay(driver=driver):
     explicit_find('class name', 'sixDigitPassword').send_keys(configs['alipay']['passwd'])
     explicit_click('css selector', '#J_authSubmit')
 
-
-
+    print(datetime.datetime.now().time(), "支付成功！祝你打球愉快~")
     return None
 
 
@@ -126,8 +149,8 @@ if __name__ == '__main__':
 
     now = datetime.datetime.now()
     begin_time_today = str(now.date()) + ' ' + begin_time
-    begin_time_dt = datetime.datetime.strptime(begin_time_today, "%Y-%m-%d %H:%M:%S") + datetime.timedelta(days=1)
-    # begin_time_dt = datetime.datetime.strptime(begin_time_today, "%Y-%m-%d %H:%M:%S") # 测试时使用
+    # begin_time_dt = datetime.datetime.strptime(begin_time_today, "%Y-%m-%d %H:%M:%S") + datetime.timedelta(days=1) # 0点之前使用
+    begin_time_dt = datetime.datetime.strptime(begin_time_today, "%Y-%m-%d %H:%M:%S") # 0点之后/测试时使用
     one_minute_before = begin_time_dt - datetime.timedelta(minutes=1)
 
     while (now < one_minute_before):
@@ -149,24 +172,21 @@ if __name__ == '__main__':
 
     # 点击场地预约、选择学院路主馆羽毛球
     explicit_click('css selector', "div.funModule > div:nth-child(1)")
-    explicit_click('css selector',
-                   'body > div.fullHeight > div > div > div.discount > div.discountWrap > div > div.venueList > div:nth-child(2) > div.venueDetail > div.venueDetailBottom > div:nth-child(1)')
-
-    WebDriverWait(driver, 30, 0.5).until(
-        EC.url_changes('https://cgyy.buaa.edu.cn/venue/venue-introduce'))  # 检查click执行完毕，此后进入轮询等待状态
 
     now = datetime.datetime.now()
     while (now < begin_time_dt):
         now = datetime.datetime.now()
         print("等待到达目标时间:", now.time())
 
+    print(now.time(), "到达目标时间，开始抢场地！")
 
-    driver.refresh()
-    print(now.time(), "到达目标时间，正在刷新浏览器！")
+    explicit_click('css selector',
+                   'body > div.fullHeight > div > div > div.discount > div.discountWrap > div > div.venueList > div:nth-child(2) > div.venueDetail > div.venueDetailBottom > div:nth-child(1)')
 
-    # 点两下日期向右（两天后），再点两下时间向后
-    explicit_click('css selector', 'body > div.fullHeight > div > div > div.coach > div.venueSiteWrap > div > div.reservationStep1 > form > div > div > button:nth-child(3)')
-    explicit_click('css selector', 'body > div.fullHeight > div > div > div.coach > div.venueSiteWrap > div > div.reservationStep1 > form > div > div > button:nth-child(3)')
+    # WebDriverWait(driver, 30, 0.5).until(
+    #     EC.url_changes('https://cgyy.buaa.edu.cn/venue/venue-introduce'))  # 检查click执行完毕，此后进入轮询等待状态
+
+    # driver.refresh()
 
     # 开始预约
     reserve(reserve_time, priority)
