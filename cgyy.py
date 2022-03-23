@@ -111,7 +111,7 @@ def reserve(reserve_time, priority, driver=driver):
                 'xpath',
                 '/html/body/div[1]/div/div/div[3]/div[2]/div/div[2]/div/div/div[2]'
             )
-
+            print(datetime.datetime.now().time(), "预约成功！进行可能的异常排查……")
             try:
                 # 当出现预约错误时返回尝试重新预约
                 err_element = explicit_find_short(
@@ -125,7 +125,7 @@ def reserve(reserve_time, priority, driver=driver):
                     driver.refresh()
                     reserve(reserve_time, priority, driver=driver)
             except:
-                print(datetime.datetime.now().time(), "预约成功！进入付款页面……")
+                print(datetime.datetime.now().time(), "预约无异常！进入付款页面……")
             return None
         else:
             continue
@@ -148,11 +148,13 @@ def pay(driver=driver):
     explicit_click('css selector', '#basic > a')
 
     try:
-        print('正在检查是否出现支付系统故障，请等待……')
+        print(datetime.datetime.now().time(), '准备支付，首先检查北航支付系统是否出现故障……')
         while (explicit_find_short('xpath', '/ html / body / pre')):
+            print(datetime.datetime.now().time(), '支付系统异常，尝试重新进入……')
             driver.back()
             explicit_click('css selector', '#basic > a')
     except:
+        print(datetime.datetime.now().time(), '支付系统无异常，进行支付……')
         pass
 
     explicit_click(
@@ -191,8 +193,7 @@ if __name__ == '__main__':
         now = datetime.datetime.now()
         print("等待到达目标时间前一分钟:", now.time())
 
-    print(now.time())
-    print("到达目标时间前一分钟，开始启动浏览器内核")
+    print(now.time(), "到达目标时间前一分钟，开始启动浏览器内核")
 
     driver.get("https://cgyy.buaa.edu.cn/venue/Login")
 

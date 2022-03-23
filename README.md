@@ -47,6 +47,13 @@ You could try with other browser's driver (e.g. Firefox, Edge, Safari, etc.). Se
 - please check `python cgyy.py` line 186-187. If your current time is from 0:00-7:00 (for example, you get up minutes before 7am and run the script), use line 187 and comment line 186. Instead, use 186, which is a more common scenario if you're running the script before bedtime.
 - Simply run the code with `python cgyy.py`. Or you could use other IDEs like Pycharm to run and see how each line works.
 
+# Results
+
+If you're running everything correctly, you should see the messages like this (ignore the timestamp):
+![](img/messages.png)
+
+Theoretically, as the messages above indicate, it should only takes ***3 seconds*** to lock the court.
+
 # TODO
 
 - An automatic framework. Hopefully, the main python script should only have for-loops and the YAML file decides which button to click, which and where the keys to send.
