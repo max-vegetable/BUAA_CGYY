@@ -12,7 +12,7 @@ driver.maximize_window()
 
 begin_time = "07:00:00"  # 注意07的0
 
-conf_file = open('configs/default.yaml', 'r')
+conf_file = open('configs/default.yaml', 'r',encoding='utf-8')
 configs = yaml.load(conf_file, Loader=yaml.Loader)
 
 reserve_time = configs['reserve_time']  # 开始时间，此即为8~9, 9~10，24小时制！
